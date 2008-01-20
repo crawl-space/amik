@@ -1,0 +1,48 @@
+Name:           amik
+Version:        @VERSION@
+Release:        1%{?dist}
+Summary:        Track your bandwidth cap
+
+Group:          Applications/System
+License:        GPLv2+
+URL:            http://anongit.dangerouslyinc.com/%{name}
+Source0:        http://dangerouslyinc.com/files/%{name}/%{name}-%{version}.tar.bz2
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch:      noarch
+
+BuildRequires:  python-devel
+
+
+%description
+Track your bandwidth cap.
+
+
+%prep
+%setup -q
+
+
+%build
+%configure
+make %{?_smp_mflags}
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root,-)
+%doc COPYING README
+%{_bindir}/amik
+
+%{_datadir}/amik
+
+
+%changelog
+* Sun Jan 20 2008 James Bowes <jbowes@dangerouslyinc.com> 0.0.1-1
+- Initial packaging
