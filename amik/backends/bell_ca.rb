@@ -104,7 +104,8 @@ def get_usage(username, password)
             afile.puts(resp.body)
         }
     end
-
+    
+    return used_gb, total_gb, start_date, end_date
 end
 
 

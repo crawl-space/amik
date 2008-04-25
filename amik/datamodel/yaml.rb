@@ -16,30 +16,37 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-require 'logger'
+require 'yaml'
 
-$log = Logger.new(STDOUT)
-$log.level = Logger::DEBUG
+module AmikYaml
 
-def get_usage(username, password)
-    $log.debug("Getting dummy usage data for '#{username}'")
+    class DataPoint
 
-    current_usage = 15
-    total_usage = 40
-    start_date = "2008-04-01"
-    end_date = "2008-04-24"
-    $log.debug("Dummy current usage: #{current_usage}")
-    $log.debug("Dummy total usage: #{total_usage}")
-    $log.debug("Dummy start date: #{start_date}")
-    $log.debug("Dummy end date: #{end_date}")
+        attr_accessor :used, :total, :start, :end
 
-    return current_usage, total_usage, start_date, end_date
-end
+        def to_s
+            "#{@start} - #{@end} : #{@used}/#{@total} GB"
+        end
 
-if __FILE__ == $0
-    if not ARGV.length == 2
-        puts "Usage: #{$0} USERNAME PASSWORD"
-        exit
     end
-    get_usage(ARGV[0], ARGV[1])
+
+    class DataModel
+
+        attr_accessor :points
+        
+        def initialize
+            @version = "0.0.1"
+        end
+    end
+
+    def load(path)
+        YAML::load(File.read(path))
+    end
+    module_function :load
+
+    def save(path, model)
+        outfile = File.new(path, 'w')
+        outfile.puts(model.to_yaml)
+    end
+    module_function :save
 end

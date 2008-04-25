@@ -16,30 +16,37 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-require 'logger'
+class DataPoint
 
-$log = Logger.new(STDOUT)
-$log.level = Logger::DEBUG
+    # Bandwith usage we can increment
+    @@used = 15
 
-def get_usage(username, password)
-    $log.debug("Getting dummy usage data for '#{username}'")
+    # A day of the month we can increment
+    @@end = 26
 
-    current_usage = 15
-    total_usage = 40
-    start_date = "2008-04-01"
-    end_date = "2008-04-24"
-    $log.debug("Dummy current usage: #{current_usage}")
-    $log.debug("Dummy total usage: #{total_usage}")
-    $log.debug("Dummy start date: #{start_date}")
-    $log.debug("Dummy end date: #{end_date}")
+    def initialize
+        @used = @@used
+        @total = 60
+        @start = "2007-01-01"
+        @end = "2007-01-#{@@end}"
 
-    return current_usage, total_usage, start_date, end_date
-end
-
-if __FILE__ == $0
-    if not ARGV.length == 2
-        puts "Usage: #{$0} USERNAME PASSWORD"
-        exit
+        @@used += 1
+        @@end += 1
     end
-    get_usage(ARGV[0], ARGV[1])
+
+    def to_s
+        "#{@start} - #{@end} : #{@used}/#{@total} GB"
+    end
 end
+
+class DataModel
+
+    attr_reader :points
+
+    def initialize
+        @points = [DataPoint.new, DataPoint.new]
+    end
+
+end
+
+puts DataModel.new.to_yaml

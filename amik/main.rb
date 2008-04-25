@@ -16,30 +16,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-require 'logger'
+require 'amik/datamodel/yaml'
+require 'amik/backends/bell_ca'
+#require 'amik/backends/dummy'
 
-$log = Logger.new(STDOUT)
-$log.level = Logger::DEBUG
-
-def get_usage(username, password)
-    $log.debug("Getting dummy usage data for '#{username}'")
-
-    current_usage = 15
-    total_usage = 40
-    start_date = "2008-04-01"
-    end_date = "2008-04-24"
-    $log.debug("Dummy current usage: #{current_usage}")
-    $log.debug("Dummy total usage: #{total_usage}")
-    $log.debug("Dummy start date: #{start_date}")
-    $log.debug("Dummy end date: #{end_date}")
-
-    return current_usage, total_usage, start_date, end_date
+def main(args)
+    dm = AmikYaml::load('data.yml')
+    point = AmikYaml::DataPoint.new
+    point.used, point.total, point.start, point.end = get_usage(args[0], args[1])
+    puts dm.points << point
+    puts AmikYaml.instance_methods
+    AmikYaml::save('data.yml', dm)
 end
 
 if __FILE__ == $0
-    if not ARGV.length == 2
-        puts "Usage: #{$0} USERNAME PASSWORD"
-        exit
-    end
-    get_usage(ARGV[0], ARGV[1])
+    main(ARGV)
 end
