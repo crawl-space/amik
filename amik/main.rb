@@ -24,8 +24,9 @@ def main(args)
     dm = AmikYaml::load('data.yml')
     point = AmikYaml::DataPoint.new
     point.used, point.total, point.start, point.end = get_usage(args[0], args[1])
-    puts dm.points << point
-    puts AmikYaml.instance_methods
+    if point.used:
+        dm.add_data_point(point)
+    end
     AmikYaml::save('data.yml', dm)
 end
 

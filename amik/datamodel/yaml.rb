@@ -17,6 +17,10 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 require 'yaml'
+require 'logger'
+
+$log = Logger.new(STDOUT)
+$log.level = Logger::DEBUG
 
 module AmikYaml
 
@@ -32,10 +36,18 @@ module AmikYaml
 
     class DataModel
 
-        attr_accessor :points
+        attr_reader :points
         
         def initialize
             @version = "0.0.1"
+        end
+
+        def add_data_point(point)
+            if @points.length != 0 and @points.last.end >= point.end
+                $log.info("Datapoint '#{point}' not newer than last point")
+            else
+                @points << point
+            end
         end
     end
 

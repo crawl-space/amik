@@ -47,6 +47,9 @@ class DataModel
         @points = [DataPoint.new, DataPoint.new]
     end
 
+    def add_data_point(point)
+        @points << point
+    end
 end
 
 puts DataModel.new.to_yaml
