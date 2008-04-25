@@ -92,8 +92,10 @@ def get_usage(username, password)
             end
         elsif line =~ /selected>(\d\d\d\d-[A-Z][a-z][a-z]-\d\d?) - (\d\d\d\d-[A-Z][a-z][a-z]-\d\d?)<\/option>/
             $log.debug("Found date range #{$1} to #{$2}")
-            start_date = $1
-            end_date = $2
+
+            # This should be of the form '2008-Mar-27'
+            start_date = Date::strptime($1.downcase(), "%Y-%b-%d")
+            end_date = Date::strptime($2.downcase(), "%Y-%b-%d")
         end
     }
 

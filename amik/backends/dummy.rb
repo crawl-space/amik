@@ -16,6 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+require 'date'
 require 'logger'
 
 $log = Logger.new(STDOUT)
@@ -26,8 +27,8 @@ def get_usage(username, password)
 
     current_usage = 15
     total_usage = 40
-    start_date = "2008-04-01"
-    end_date = "2008-04-24"
+    start_date = Date::strptime("2008-04-01")
+    end_date = Date::strptime("2008-04-24")
     $log.debug("Dummy current usage: #{current_usage}")
     $log.debug("Dummy total usage: #{total_usage}")
     $log.debug("Dummy start date: #{start_date}")
