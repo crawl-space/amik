@@ -30,5 +30,10 @@ def main(args)
 end
 
 if __FILE__ == $0
+    if not ARGV.length == 2
+        puts "Usage: #{$0} USERNAME PASSWORD"
+        exit
+    end
+
     main(ARGV)
 end
