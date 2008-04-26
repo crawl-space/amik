@@ -17,10 +17,9 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 require 'mechanize'
-require 'logger'
+require 'amik/logger'
 
-$log = Logger.new(STDOUT)
-$log.level = Logger::DEBUG
+$log = get_logger()
 
 class StubUri
     attr_accessor :host
