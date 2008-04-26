@@ -25,10 +25,17 @@ module AmikYaml
 
     class DataPoint
 
-        attr_accessor :used, :total, :start, :end
+        attr_accessor :used, :total, :start_date, :end_date
+
+        def initialize(used, total, start_date, end_date)
+            @used = used
+            @total = total
+            @start_date = start_date
+            @end_date = end_date
+        end
 
         def to_s
-            "#{@start} - #{@end} : #{@used}/#{@total} GB"
+            "#{@start_date} - #{@end_date} : #{@used}/#{@total} GB"
         end
 
     end
@@ -39,10 +46,11 @@ module AmikYaml
         
         def initialize
             @version = "0.0.1"
+            @points = []
         end
 
         def add_data_point(point)
-            if @points.length != 0 and @points.last.end >= point.end
+            if @points.length != 0 and @points.last.end_date >= point.end_date
                 $log.info("Datapoint '#{point}' not newer than last point")
             else
                 @points << point

@@ -16,26 +16,26 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+require 'test/unit'
+
+require 'date'
+
 require 'amik/datamodel/yaml'
-require 'amik/backends/bell_ca'
-#require 'amik/backends/dummy'
 
-def main(args)
-    dm = AmikYaml::load('data.yml')
-    used, total, start_date, end_date = get_usage(args[0], args[1])
+class DataModelTest < Test::Unit::TestCase
 
-    point = AmikYaml::DataPoint.new(used, total, start_date, end_date)
-    if point.used:
-        dm.add_data_point(point)
+    def test_older_point_wont_be_added
+        model = AmikYaml::DataModel.new
+
+        point1 = AmikYaml::DataPoint.new(15, 60, Date.new(2008, 04, 01),
+                                         Date.new(2008, 04, 28))
+        point2 = AmikYaml::DataPoint.new(13, 60,  Date.new(2008, 04, 01),
+                                         Date.new(2008, 04, 27))
+
+        model.add_data_point(point1)
+        assert model.points.length == 1
+
+        model.add_data_point(point2)
+        assert model.points.length == 1
     end
-    AmikYaml::save('data.yml', dm)
-end
-
-if __FILE__ == $0
-    if not ARGV.length == 2
-        puts "Usage: #{$0} USERNAME PASSWORD"
-        exit
-    end
-
-    main(ARGV)
 end

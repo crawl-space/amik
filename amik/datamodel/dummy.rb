@@ -24,7 +24,7 @@ class DataPoint
     # A day of the month we can increment
     @@end = 26
 
-    def initialize
+    def initialize(used, total, start_date, end_date)
         @used = @@used
         @total = 60
         @start = "2007-01-01"
