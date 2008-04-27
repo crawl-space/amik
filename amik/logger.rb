@@ -40,6 +40,10 @@ end
 
 class ColorFormatter < Logger::Formatter
 
+    def format_datetime(time)
+        time.strftime("%Y-%m-%d %H:%M:%S.") << "%03d" % (time.usec / 1000)
+    end
+
     def call(severity, time, progname, msg)
         msg = "  - #{msg2str(msg)}"
         if severity == 'DEBUG'
@@ -50,7 +54,7 @@ class ColorFormatter < Logger::Formatter
             msg = red(msg)
         end
 
-        status_line = "%s#%d %5s" % [format_datetime(time), $$, severity,
+        status_line = "%s #%d %5s %s" % [format_datetime(time), $$, severity,
             progname]
 
         "%s\n%s\n" % [green(status_line), msg]
