@@ -27,8 +27,8 @@ def main(args)
     point = AmikYaml::DataPoint.new(used, total, start_date, end_date)
     if point.used:
         dm.add_data_point(point)
+        AmikYaml::save('data.yml', dm)
     end
-    AmikYaml::save('data.yml', dm)
 end
 
 if __FILE__ == $0

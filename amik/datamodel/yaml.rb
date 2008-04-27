@@ -16,7 +16,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+require 'fileutils'
 require 'yaml'
+
 require 'amik/logger'
 
 $log = get_logger()
@@ -64,8 +66,25 @@ module AmikYaml
     module_function :load
 
     def save(path, model)
-        outfile = File.new(path, 'w')
-        outfile.puts(model.to_yaml)
+        safe_write(path, model.to_yaml)
     end
     module_function :save
+
+    # Write file to path, making a backup of path if it exists
+    # if the write fails, the original file will be preserved
+    def safe_write(path, contents)
+        if File.exists?(path)
+            $log.debug("Making a backup of #{path}")
+            FileUtils.cp(path, path + '.bak')
+        end
+
+        $log.debug("Writing new contents to #{path}.new")
+        outfile = File.new(path + '.new', 'w')
+        outfile.puts(contents)
+
+        $log.debug("Moving #{path}.new to #{path}")
+        FileUtils.mv(path + '.new', path)
+    end
+    module_function :safe_write
+
 end
