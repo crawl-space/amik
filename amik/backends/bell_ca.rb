@@ -21,15 +21,11 @@ require 'amik/logger'
 
 $log = get_logger()
 
-class StubUri
-    attr_accessor :host
-end
-
 def get_usage(username, password)
     agent = WWW::Mechanize.new
 
     resp = agent.get("https://www.bell.ca/internetusage")
-    $log.debug("At login page - '#{resp.title}'")
+    $log.debug("At login page - '#{resp.title}' : '#{resp.uri}'")
 
     login_form = resp.forms.with.name("loginForm").first
     login_form.USER = username
@@ -38,12 +34,14 @@ def get_usage(username, password)
     $log.debug("logging in as '#{username}'")
 
     resp = agent.submit(login_form)
-    $log.debug("At redirected login page - '#{resp.title}'")
+    $log.debug("At redirected login page - '#{resp.title}' : '#{resp.uri}'")
 
     login_form = resp.forms.with.name("Login").first
     
     resp = agent.submit(login_form)
-    $log.debug("At login done page - '#{resp.title}'")
+    $log.debug("At login done page - '#{resp.title}' : '#{resp.uri}'")
+
+    host = resp.uri.host
 
     resp.body.each("\n") {|line|
         idx = line.index('setCookie')
@@ -52,22 +50,20 @@ def get_usage(username, password)
             if line =~ /setCookie\('(.*?)', '(.*?)'/
                 $log.debug("Setting cookie '#{$1}'")
                 cookie = WWW::Mechanize::Cookie.new($1, $2)
-                cookie.domain = "secureo.bell.ca"
-                uri = StubUri.new
-                uri.host = "secureo.bell.ca"
-                agent.cookie_jar.add(uri, cookie)
+                cookie.domain = resp.uri.host
+                agent.cookie_jar.add(resp.uri, cookie)
             end
         end
     }
 
-    resp = agent.get("https://secureo.bell.ca/mybell/ociLoadProfileForPage.jsp?destinationPageLabel=resources/login/invisibleLogin/loginCompleted.jsp&destinationContext=mybell&isProtected=true&isPortalPage=false")
-    $log.debug("At loading page - '#{resp.title}'")
+    resp = agent.get("https://#{host}/mybell/ociLoadProfileForPage.jsp?destinationPageLabel=resources/login/invisibleLogin/loginCompleted.jsp&destinationContext=mybell&isProtected=true&isPortalPage=false")
+    $log.debug("At loading page - '#{resp.title}' : '#{resp.uri}'")
 
-    resp = agent.get("https://secureo.bell.ca/mybell/ociseclvl3_PrsMyAccts_InternetSvcEq.page")
-    $log.debug("At home page - '#{resp.title}'")
+    resp = agent.get("https://#{host}/mybell/ociseclvl3_PrsMyAccts_InternetSvcEq.page")
+    $log.debug("At home page - '#{resp.title}' : '#{resp.uri}'")
 
-    resp = agent.get("https://secureo.bell.ca/mybell/ociseclvl3.portal?_nfpb=true&portlet_10_1_actionOverride=%2Fportlets%2Foci%2FmyLob%2FmyInternet%2FshowBandwithUsage&_windowLabel=portlet_10_1&_pageLabel=ociseclvl3_PrsMyAccts_InternetSvcEq")
-    $log.debug("At bandwith usage page - '#{resp.title}'")
+    resp = agent.get("https://#{host}/mybell/ociseclvl3.portal?_nfpb=true&portlet_10_1_actionOverride=%2Fportlets%2Foci%2FmyLob%2FmyInternet%2FshowBandwithUsage&_windowLabel=portlet_10_1&_pageLabel=ociseclvl3_PrsMyAccts_InternetSvcEq")
+    $log.debug("At bandwith usage page - '#{resp.title}' : '#{resp.uri}'")
 
     used_gb = nil
     total_gb = nil
