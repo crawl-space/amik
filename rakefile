@@ -21,8 +21,10 @@ require 'rake/testtask'
 
 task :default => [:test]
 
+task :test => [:test_units]
+
 desc "Run unit tests"
-Rake::TestTask.new("test") { |t|
+Rake::TestTask.new("test_units") { |t|
     t.pattern = "test/*_test.rb"
 }
 
