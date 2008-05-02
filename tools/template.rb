@@ -16,18 +16,4 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-require 'rake'
-require 'rake/testtask'
 
-task :default => [:test]
-
-desc "Run unit tests"
-Rake::TestTask.new("test") { |t|
-    t.pattern = "test/*_test.rb"
-}
-
-desc "Generate a default ruby file"
-task :newfile do
-    puts ARGV
-    sh "cp tools/template.rb amik/#{ARGV[1]}.rb"
-end
