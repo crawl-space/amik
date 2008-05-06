@@ -30,6 +30,7 @@ Rake::TestTask.new("test_units") { |t|
 
 desc "Generate a default ruby file"
 task :newfile do
-    puts ARGV
-    sh "cp tools/template.rb amik/#{ARGV[1]}.rb"
+    filename = "amik/#{ENV['FILE']}.rb"
+    sh "cp tools/template.rb #{filename}"
+    sh "git add #{filename}"
 end
