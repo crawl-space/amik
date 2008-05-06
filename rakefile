@@ -34,3 +34,8 @@ task :newfile do
     sh "cp tools/template.rb #{filename}"
     sh "git add #{filename}"
 end
+
+desc "Find FIXMEs, TODOs, and XXXs"
+task :fixme do
+    FileList['**/*.rb'].exclude('pkg').egrep(/#.*(FIXME|TODO|XXX)/)
+end
