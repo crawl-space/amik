@@ -19,15 +19,38 @@
 require 'amik/datamodel/yaml'
 require 'amik/backends/bell_ca'
 #require 'amik/backends/dummy'
+require 'amik/config'
+
+require 'amik/logger'
+
+$log = get_logger()
+
+# XXX possibly hacky way to load all this
+def load_datamodel(config)
+    $log.debug("Loading data model")
+    require "amik/datamodel/#{config.model}"
+    return eval("Amik#{config.model.capitalize}")
+end
+
+def load_backend(config)
+    $log.debug("Loading backend")
+    require "amik/backends/#{config.backend}"
+end
 
 def main(args)
-    dm = AmikYaml::load('data.yml')
+    config = Config.new
+    dm_module = load_datamodel(config)
+    dm = dm_module::load('data.yml')
+
+    # XXX put get_usage in a module
+    load_backend(config)
     used, total, start_date, end_date = get_usage(args[0], args[1])
 
-    point = AmikYaml::DataPoint.new(used, total, start_date, end_date)
+    point = dm_module::DataPoint.new(used, total, start_date, end_date)
     if point.used:
+        $log.debu("Saving data model")
         dm.add_data_point(point)
-        AmikYaml::save('data.yml', dm)
+        dm_module::save('data.yml', dm)
     end
 end
 

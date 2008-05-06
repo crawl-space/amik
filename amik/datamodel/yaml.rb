@@ -88,3 +88,7 @@ module AmikYaml
     module_function :safe_write
 
 end
+
+def get_datamodel()
+    dm = AmikYaml::load('data.yml')
+end

@@ -20,4 +20,15 @@ require 'amik/logger'
 
 $log = get_logger()
 
+class Config
 
+    attr_reader :backend, :model
+
+    def initialize()
+        @backend = "bell_ca"
+        @model = "yaml"
+
+        $log.debug(
+            "Backend set to '#{@backend}', data model set to '#{@model}'")
+    end
+end
