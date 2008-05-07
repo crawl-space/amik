@@ -45,17 +45,23 @@ module AmikYaml
     class DataModel
 
         attr_reader :points
+        attr_accessor :last_updated
         
         def initialize
             @version = "0.0.1"
             @points = []
+
+            # This is as good a default as any
+            @last_updated = Time.now
         end
 
         def add_data_point(point)
             if @points.length != 0 and @points.last.end_date >= point.end_date
                 $log.info("Datapoint '#{point}' not newer than last point")
+                return false
             else
                 @points << point
+                return true
             end
         end
     end
@@ -66,6 +72,7 @@ module AmikYaml
     module_function :load
 
     def save(path, model)
+        model.last_updated = Time.now
         safe_write(path, model.to_yaml)
     end
     module_function :save

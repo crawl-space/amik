@@ -22,13 +22,17 @@ $log = get_logger()
 
 class Config
 
-    attr_reader :backend, :model
+    attr_reader :backend, :model, :check_frequency
 
     def initialize()
         @backend = "bell_ca"
         @model = "yaml"
 
-        $log.debug(
-            "Backend set to '#{@backend}', data model set to '#{@model}'")
+        # Check daily
+        @check_frequency = 24 * 60 * 60
+
+        $log.debug("Backend set to '#{@backend}'\n" +
+                   "Data model set to '#{@model}'\n" +
+                   "Checking every #{@check_frequency} seconds")
     end
 end

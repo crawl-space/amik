@@ -42,15 +42,25 @@ def main(args)
     dm_module = load_datamodel(config)
     dm = dm_module::load('data.yml')
 
+    if dm.last_updated + config.check_frequency <= Time.now
+        $log.debug("Checking bandwidth usage")
+    else
+        $log.debug("Not checking bandwidth usage, too soon since last check")
+        return
+    end
+
     # XXX put get_usage in a module
     load_backend(config)
     used, total, start_date, end_date = get_usage(args[0], args[1])
 
     point = dm_module::DataPoint.new(used, total, start_date, end_date)
-    if point.used:
-        $log.debu("Saving data model")
-        dm.add_data_point(point)
-        dm_module::save('data.yml', dm)
+    if point.used
+        if dm.add_data_point(point)
+            $log.debug("Saving data model")
+            dm_module::save('data.yml', dm)
+        else
+            $log.debug("Not saving data model")
+        end
     end
 end
 

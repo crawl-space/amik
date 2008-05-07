@@ -46,6 +46,7 @@ class ColorFormatter < Logger::Formatter
 
     def call(severity, time, progname, msg)
         msg = "  - #{msg2str(msg)}"
+        msg.gsub!("\n", "\n    ")
         if severity == 'DEBUG'
             msg = purple(msg)
         elsif severity == 'INFO'
