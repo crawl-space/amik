@@ -56,7 +56,7 @@ class ColorFormatter < Logger::Formatter
         end
 
         status_line = "%s #%d %5s %s" % [format_datetime(time), $$, severity,
-            progname]
+            Kernel.caller[3]]
 
         "%s\n%s\n" % [green(status_line), msg]
     end
