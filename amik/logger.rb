@@ -56,9 +56,15 @@ class ColorFormatter < Logger::Formatter
         end
 
         status_line = "%s #%d %5s %s" % [format_datetime(time), $$, severity,
-            Kernel.caller[3]]
+            format_caller(Kernel.caller[3])]
 
         "%s\n%s\n" % [green(status_line), msg]
+    end
+
+    private
+
+    def format_caller(msg)
+        msg[msg.index('amik')..-1]
     end
 end
 
