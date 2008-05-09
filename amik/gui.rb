@@ -23,69 +23,77 @@ require 'amik/logger'
 
 $log = get_logger()
 
-def make_tooltip
-    dm = AmikYaml.load('data.yml')
 
-    point = dm.points.last
+class Gui
 
-    date_fmt = "%m/%d"
-    "%s/%s GiB\nfor %s to %s" % [point.used, point.total,
-        point.start_date.strftime(date_fmt), point.end_date.strftime(date_fmt)]
-end
+    def initialize
+        icon = Gtk::StatusIcon.new
+        icon.file = 'data/amik.svg'
 
-def do_refresh
-    $log.debug("Refresh pressed")
-end
-
-def show_about
-    $log.debug("About pressed")
-
-    about = Gtk::AboutDialog.new
-    about.show_all
-end
-
-def show_menu(icon, button, time)
-    $log.debug("Showing menu")
-
-    menu = Gtk::Menu.new()
-
-    item = Gtk::ImageMenuItem.new(Gtk::Stock::REFRESH)
-    item.signal_connect("activate") { do_refresh }
-    menu.add(item)
-
-    item = Gtk::SeparatorMenuItem.new
-    menu.add(item)
-
-    item = Gtk::ImageMenuItem.new(Gtk::Stock::ABOUT)
-    item.signal_connect("activate") { show_about }
-    menu.add(item)
-
-    item = Gtk::ImageMenuItem.new(Gtk::Stock::QUIT)
-    menu.add(item)
-    item.signal_connect("activate") do
-        $log.debug("Quit pressed")
-        $log.info("Quitting...")
-        Gtk.main_quit
+        icon.tooltip = make_tooltip()
+        icon.signal_connect('activate') do |icon|
+            show_menu(icon, 0, 0)
+        end
+        icon.signal_connect('popup-menu') do |icon, button, time|
+            show_menu(icon, button, time)
+        end
     end
 
-    menu.show_all
+    def make_tooltip
+        dm = AmikYaml.load('data.yml')
 
-    # XXX need to position this properly
-    menu.popup(nil, nil, button, time)
+        point = dm.points.last
+
+        date_fmt = "%m/%d"
+        "%s/%s GiB\nfor %s to %s" % [point.used, point.total,
+            point.start_date.strftime(date_fmt), point.end_date.strftime(date_fmt)]
+    end
+
+    def do_refresh
+        $log.debug("Refresh pressed")
+    end
+
+    def show_about
+        $log.debug("About pressed")
+
+        about = Gtk::AboutDialog.new
+        about.show_all
+    end
+
+    def show_menu(icon, button, time)
+        $log.debug("Showing menu")
+
+        menu = Gtk::Menu.new()
+
+        item = Gtk::ImageMenuItem.new(Gtk::Stock::REFRESH)
+        item.signal_connect("activate") { do_refresh }
+        menu.add(item)
+
+        item = Gtk::SeparatorMenuItem.new
+        menu.add(item)
+
+        item = Gtk::ImageMenuItem.new(Gtk::Stock::ABOUT)
+        item.signal_connect("activate") { show_about }
+        menu.add(item)
+
+        item = Gtk::ImageMenuItem.new(Gtk::Stock::QUIT)
+        menu.add(item)
+        item.signal_connect("activate") do
+            $log.debug("Quit pressed")
+            $log.info("Quitting...")
+            Gtk.main_quit
+        end
+
+        menu.show_all
+
+        # XXX need to position this properly
+        menu.popup(nil, nil, button, time)
+    end
+
 end
 
 def main
-    icon = Gtk::StatusIcon.new
-    icon.file = 'data/amik.svg'
-
-    icon.tooltip = make_tooltip()
-    icon.signal_connect('activate') do |icon|
-        show_menu(icon, 0, 0)
-    end
-    icon.signal_connect('popup-menu') do |icon, button, time|
-        show_menu(icon, button, time)
-    end
-
+    icon = Gui.new
     Gtk.main()
 end
 

@@ -37,12 +37,12 @@ def load_backend(config)
     require "amik/backends/#{config.backend}"
 end
 
-def main(args)
+def main(force, args)
     config = Config.new
     dm_module = load_datamodel(config)
     dm = dm_module::load('data.yml')
 
-    if dm.last_updated + config.check_frequency <= Time.now
+    if force or dm.last_updated + config.check_frequency <= Time.now
         $log.debug("Checking bandwidth usage")
     else
         $log.debug("Not checking bandwidth usage, too soon since last check")
@@ -65,10 +65,20 @@ def main(args)
 end
 
 if __FILE__ == $0
-    if not ARGV.length == 2
+    force = false
+    args = []
+    ARGV.each do |item|
+        if not item == '--force'
+            args << item
+        else
+            force = true
+        end
+    end
+
+    if not args.length == 2
         puts "Usage: #{$0} USERNAME PASSWORD"
         exit
     end
 
-    main(ARGV)
+    main(force, args)
 end
