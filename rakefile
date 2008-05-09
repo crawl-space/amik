@@ -16,6 +16,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+$NAME = "amik"
+$VERSION = "0.0.1"
+
 require 'rake'
 require 'rake/testtask'
 
@@ -27,6 +30,11 @@ desc "Run unit tests"
 Rake::TestTask.new("test_units") { |t|
     t.pattern = "test/*_test.rb"
 }
+
+file "amik/util/config.rb" => ['amik/util/config.rb.in'] do |t|
+    sh "cp amik/util/config.rb.in amik/util/config.rb"
+    sh "sed -i 's/@VERSION@/#{$VERSION}/' amik/util/config.rb"
+end
 
 desc "Generate a default ruby file"
 task :newfile do
