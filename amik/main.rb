@@ -42,7 +42,9 @@ def main(force, args)
     dm_module = load_datamodel(config)
     dm = dm_module::load('data.yml')
 
-    if force or dm.last_updated + config.check_frequency <= Time.now
+    if force
+        $log.debug("Bandwidth check forced")
+    elsif dm.last_updated + config.check_frequency <= Time.now
         $log.debug("Checking bandwidth usage")
     else
         $log.debug("Not checking bandwidth usage, too soon since last check")
