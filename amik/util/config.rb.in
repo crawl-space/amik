@@ -16,5 +16,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-VERSION = '@VERSION@'
-DATADIR = '@DATADIR@/data/'
+module Amik
+    module Util
+
+        VERSION = '@VERSION@'
+        DATADIR = '@DATADIR@/data/'
+
+    end
+end

@@ -16,10 +16,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+require 'optparse'
+
 require 'amik/datamodel/yaml'
 require 'amik/backends/bell_ca'
 #require 'amik/backends/dummy'
 require 'amik/config'
+require 'amik/util/config'
 
 require 'amik/logger'
 
@@ -67,20 +70,36 @@ def main(force, args)
 end
 
 if __FILE__ == $0
-    force = false
-    args = []
-    ARGV.each do |item|
-        if not item == '--force'
-            args << item
-        else
-            force = true
+    options = {}
+    parser = OptionParser.new do |opts|
+        opts.version = '0.2'
+        opts.banner = "Usage: #{$0} [options] USERNAME PASSWORD"
+        opts.on("-f", "--force", "Force update") do |f|
+            options[:force] = f
+        end
+
+        opts.on_tail("-h", "--help", "Show this message") do
+            puts opts
+            exit
+        end
+
+        opts.on_tail("--version", "Show version") do
+            puts "amik #{Amik::Util::VERSION}"
+            exit
         end
     end
 
-    if not args.length == 2
-        puts "Usage: #{$0} USERNAME PASSWORD"
+    begin
+        parser.parse!
+    rescue OptionParser::ParseError
+        puts parser.help
         exit
     end
 
-    main(force, args)
+    if not ARGV.length == 2
+        puts parser.help
+        exit
+    end
+
+    main(options[:force], ARGV)
 end
