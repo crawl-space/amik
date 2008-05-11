@@ -1,0 +1,10 @@
+= rakefile targets =
+* runlocal
+* dist
+* rpm
+
+= misc =
+* hook config up to gconf
+* log to file as well as stdout
+* store data etc under xdg dirs
+* tomato firmware backend
