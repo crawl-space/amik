@@ -16,6 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+require 'fileutils'
 require 'optparse'
 
 require 'amik/datamodel/yaml'
@@ -41,9 +42,13 @@ def load_backend(config)
 end
 
 def main(force, args)
+    data_dir = File.expand_path("~/.local/share/amik/")
+    FileUtils.mkdir_p(data_dir)
+    data_file = File.join(data_dir, 'data.yml')
+
     config = Config.new
     dm_module = load_datamodel(config)
-    dm = dm_module::load('data.yml')
+    dm = dm_module::load(data_file)
 
     if force
         $log.debug("Bandwidth check forced")
@@ -62,7 +67,7 @@ def main(force, args)
     if point.used
         if dm.add_data_point(point)
             $log.debug("Saving data model")
-            dm_module::save('data.yml', dm)
+            dm_module::save(data_file, dm)
         else
             $log.debug("Not saving data model")
         end
