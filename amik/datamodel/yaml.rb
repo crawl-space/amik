@@ -52,7 +52,8 @@ module AmikYaml
             @points = []
 
             # This is as good a default as any
-            @last_updated = Time.now
+            @last_updated = Time.local(1970, 'jan', 1)
+            print @last_updated
         end
 
         def add_data_point(point)
@@ -67,7 +68,12 @@ module AmikYaml
     end
 
     def load(path)
-        YAML::load(File.read(path))
+        if File.readable?(path)
+            YAML::load(File.read(path))
+        else
+            $log.info("Unable to read data file; will create a new one on save")
+            DataModel.new
+        end
     end
     module_function :load
 
