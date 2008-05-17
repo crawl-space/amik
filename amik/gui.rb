@@ -40,7 +40,11 @@ class Gui
     end
 
     def make_tooltip
-        dm = AmikYaml.load('data.yml')
+        data_dir = File.expand_path("~/.local/share/amik/")
+        FileUtils.mkdir_p(data_dir)
+        data_file = File.join(data_dir, 'data.yml')
+
+        dm = AmikYaml.load(data_file)
 
         point = dm.points.last
 
